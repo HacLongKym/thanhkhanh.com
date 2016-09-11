@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: http://noithat-thanhkhanh.ga/sitemap_index.xml
+
