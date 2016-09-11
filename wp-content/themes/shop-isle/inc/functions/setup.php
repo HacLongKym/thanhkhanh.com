@@ -95,7 +95,12 @@ if ( ! function_exists( 'shop_isle_setup' ) ) :
 		add_theme_support( 'title-tag' );
 		
 		/* Custom header */
-		add_theme_support( 'custom-header', array( 'default-image' => get_template_directory_uri().'/assets/images/header.jpg' ));
+		add_theme_support( 'custom-header', array(
+			'default-image' => get_template_directory_uri().'/assets/images/header.jpg',
+			'width'                  => 1200,
+			'height'                 => 280,
+			'flex-height'            => true,
+		));
 
 		register_default_headers( array(
 			'header' => array(
@@ -550,4 +555,13 @@ function shop_isle_php_style() {
 	echo  !empty($shop_isle_body_font_size) ? 'body{font-size:'.$shop_isle_body_font_size.'}' : '' ;
 
 	echo '</style>';
+}
+
+add_action( 'init','shop_isle_option_used_for_pro' );
+
+/* Function used for tranzition to PRO */
+function shop_isle_option_used_for_pro() {
+
+	update_option( 'shop_isle_wporg_flag','true' );
+
 }

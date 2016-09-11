@@ -107,6 +107,7 @@ button.shop_isle_general_control_remove_field:hover{
 	background-color: #EA6F60;
 	letter-spacing: 1px;
 	text-transform: uppercase;
+	margin-left: 30px;
 }
 .shop-isle-require-woo {
 	background-color: #f0ad4e;
@@ -114,4 +115,15 @@ button.shop_isle_general_control_remove_field:hover{
 }
 .shop_isle_hidden_if_not_customizer {
 	display: none !important;
+}
+#accordion-section-shop-isle-upsell {
+	display: block !important;
+}
+#accordion-section-shop_isle_upsell_section .accordion-section-title {
+	background-image:url(../images/gray-lines.png);
+	background-repeat:repeat;
+}
+
+#accordion-section-shop_isle_upsell_section .accordion-section-title:after {
+	content: "\f160";
 }

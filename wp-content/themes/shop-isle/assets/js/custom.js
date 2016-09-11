@@ -384,4 +384,83 @@
 		}
 	});
 
+    /* WR MegaMenu */
+    var $megaMen = $( '.wr-megamenu-container' );
+    if( $megaMen.length > 0 ) {
+        $( '.navbar-custom' ).addClass( 'wr-megamenu-container-wrap' );
+        $megaMen.addClass("bg-tr");
+        shopIsleNewStyleForWpMegaMenu( '.wr-megamenu-container.bg-tr,' +
+            '.wr-megamenu-container.bg-tr .wr-mega-menu > li:hover > a, ' +
+            '.wr-megamenu-container.bg-tr .wr-mega-menu > li.focus > a' +
+            ' { background: transparent !important }'
+        );
+    }
+    function shopIsleNewStyleForWpMegaMenu( newStyle ) {
+		var styleElement = document.getElementById('shop_isle_styles_js');
+		if (!styleElement) {
+			styleElement = document.createElement('style');
+			styleElement.type = 'text/css';
+			styleElement.id = 'shop_isle_styles_js';
+			document.getElementsByTagName('footer')[0].appendChild(styleElement);
+		}
+		styleElement.appendChild(document.createTextNode(newStyle));
+	}
+
+	/* WR MegaMenu */
+	var $megaMen = $( '.wr-megamenu-container' );
+	if( $megaMen.length > 0 ) {
+		$( '.navbar-custom' ).addClass( 'wr-megamenu-container-wrap' );
+		$megaMen.addClass("bg-tr");
+		shopIsleNewStyleForWpMegaMenu( '.wr-megamenu-container.bg-tr,' +
+			'.wr-megamenu-container.bg-tr .wr-mega-menu > li:hover > a, ' +
+			'.wr-megamenu-container.bg-tr .wr-mega-menu > li.focus > a' +
+			' { background: transparent !important }'
+		);
+	}
+	function shopIsleNewStyleForWpMegaMenu( newStyle ) {
+		var styleElement = document.getElementById('shop_isle_styles_js');
+		if (!styleElement) {
+			styleElement = document.createElement('style');
+			styleElement.type = 'text/css';
+			styleElement.id = 'shop_isle_styles_js';
+			document.getElementsByTagName('footer')[0].appendChild(styleElement);
+		}
+		styleElement.appendChild(document.createTextNode(newStyle));
+	}
+
 })(jQuery);
+
+
+(function($,window){
+
+    var mobileTest;
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        mobileTest = true;
+    }
+
+    /* ---------------------------------------------- /*
+     * Dropdown mennu on tablet
+     /* ---------------------------------------------- */
+    var $menuBtnChildren = $('.menu-item-has-children'),
+        submenuOpenClass = 'open',
+        $thisParent,
+        $menuWrap = $('.header-menu-wrap,.wr-megamenu-fixed');
+    $menuBtnChildren.click(function(event){
+        if( mobileTest && !$(this).hasClass(submenuOpenClass) && window.innerWidth > 767 ) {
+            $thisParent = $(this).parent('ul').parent('li');
+            if( $thisParent.hasClass(submenuOpenClass) ){
+                $thisParent.find('.'+submenuOpenClass).removeClass(submenuOpenClass);
+            } else {
+                $menuWrap.find('.'+submenuOpenClass).removeClass(submenuOpenClass);
+            }
+            $(this).addClass(submenuOpenClass);
+            event.stopPropagation();
+            return false;
+        }
+    });
+
+    $('html,body,.main,.navbar-custom,.bottom-page-wrap').click(function(){
+        $menuWrap.find('.'+submenuOpenClass).removeClass(submenuOpenClass);
+    });
+
+})(jQuery, window);

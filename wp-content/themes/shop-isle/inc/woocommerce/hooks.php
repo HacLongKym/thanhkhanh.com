@@ -29,7 +29,7 @@ remove_action( 'woocommerce_before_shop_loop', 		'woocommerce_catalog_ordering',
 remove_action( 'woocommerce_after_shop_loop', 		'woocommerce_pagination', 					10 );
 remove_action( 'woocommerce_archive_description', 	'woocommerce_product_archive_description',  10 );
 
-add_action( 'shop_isle_before_shop', 				'woocommerce_product_archive_description', 	5 );
+add_action( 'shop_isle_before_shop', 				'shop_isle_woocommerce_product_archive_description', 	5 );
 
 add_action( 'woocommerce_before_main_content', 		'shop_isle_before_content', 				10 );
 

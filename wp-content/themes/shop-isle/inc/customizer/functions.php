@@ -28,12 +28,6 @@ if ( ! function_exists( 'shop_isle_customizer_script' ) ) {
 
 		wp_enqueue_script( 'shop_isle_customizer_script', get_template_directory_uri() . '/js/shop_isle_customizer.js', array("jquery","jquery-ui-draggable"),'', true );
 
-		wp_localize_script( 'shop_isle_customizer_script', 'objectL10n', array(
-
-			'documentation' => __( 'Documentation', 'shop-isle' )
-
-		) );
-
 	}
 }
 
@@ -311,7 +305,7 @@ if ( class_exists( 'WP_Customize_Control' ) ):
                                                 <select name="<?php echo esc_attr($this->id); ?>" class="shop_isle_icon_control">
                                                 <?php
                                                     foreach($icons_array as $contact_icon) {
-                                                        if($icon->icon_value == $contact_icon){
+                                                        if( !empty($icon->icon_value) && ($icon->icon_value == $contact_icon) ){
                                                             echo '<option value="'.esc_attr($contact_icon).'" selected="selected">'.esc_attr($contact_icon).'</option>';
                                                         } else {
                                                             echo '<option value="'.esc_attr($contact_icon).'">'.esc_attr($contact_icon).'</option>';

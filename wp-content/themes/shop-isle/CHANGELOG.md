@@ -1,3 +1,24 @@
+### 1.1.6.4 - 01/09/2016
+
+**Changes:**
+
+- CSS for the My Account page in WooCommerce
+
+- Mega menu compatibility
+
+- Fixed recommended dimensions for header image
+ 
+- Compatibility with Woocommerce products per page plugin
+ 
+- Added specific class to allow the prices in product slider section to be removed
+ 
+- Fixed issue with focusing fields on mobile devices
+ 
+- Fixed issue with ZIP code not customizable in WooCommerce checkout page
+ 
+- Added upsells to pro version
+
+
 ### 1.1.6.3 - 28/07/2016
 
 **Changes:**

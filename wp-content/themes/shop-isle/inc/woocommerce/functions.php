@@ -463,3 +463,32 @@ if ( !function_exists( 'shop_isle_search_products_no_results_wrapper_end' ) ) {
 		}
 	}
 }	
+
+/* Display WooCommerce product category description on all category archive pages */
+if ( !function_exists( 'shop_isle_woocommerce_taxonomy_archive_description' ) ) {
+	function shop_isle_woocommerce_taxonomy_archive_description() {
+	    if ( is_tax( array( 'product_cat', 'product_tag' ) ) && get_query_var( 'paged' ) != 0 ) {
+	        $description = wc_format_content( term_description() );
+	        if ( $description ) {
+	            echo '<div class="term-description">' . $description . '</div>';
+	        }
+	    }
+	}
+}
+add_action( 'woocommerce_archive_description', 'shop_isle_woocommerce_taxonomy_archive_description');
+
+
+/* Display WooCommerce shop content on all shop pages */
+if ( !function_exists( 'shop_isle_woocommerce_product_archive_description' ) ) {
+	function shop_isle_woocommerce_product_archive_description() {
+		if ( is_post_type_archive( 'product' ) ) {
+			$shop_page   = get_post( wc_get_page_id( 'shop' ) );
+			if ( $shop_page ) {
+				$description = wc_format_content( $shop_page->post_content );
+				if ( $description ) {
+					echo '<div class="page-description">' . $description . '</div>';
+				}
+			}
+		}
+	}
+}

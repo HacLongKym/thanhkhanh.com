@@ -96,6 +96,7 @@
 		/***********************/
 		
 		$shop_isle_banners_hide = get_theme_mod('shop_isle_banners_hide');
+		$shop_isle_banners_title = get_theme_mod('shop_isle_banners_title');
 		
 		if ( isset($shop_isle_banners_hide) && $shop_isle_banners_hide != 1 ) {
 			echo '<section class="module-small home-banners">';
@@ -125,6 +126,21 @@
 				if( !empty($shop_isle_banners_decoded) ) {
 							
 						echo '<div class="container">';
+
+							if ( !empty($shop_isle_banners_title) ) {
+								echo '<div class="row">';
+									echo '<div class="col-sm-6 col-sm-offset-3">';
+										echo '<h2 class="module-title font-alt product-banners-title">'. $shop_isle_banners_title .'</h2>';
+									echo '</div>';
+								echo '</div>';
+
+							} elseif ( is_customize_preview() ) {
+								echo '<div class="row">';
+									echo '<div class="col-sm-6 col-sm-offset-3">';
+										echo '<h2 class="module-title font-alt product-banners-title shop_isle_hidden_if_not_customizer"></h2>';
+									echo '</div>';
+								echo '</div>';
+							}
 
 							echo '<div class="row shop_isle_bannerss_section">';
 							
@@ -278,17 +294,17 @@
 													if( !empty($format_string) ) {
 														switch ( $format_string ) {
 															case '%1$s%2$s' :
-																echo get_woocommerce_currency_symbol().$product->price;
-															break;
+																echo '<span class="shop-item-price"><span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span>'.$product->price.'</span>';
+																break;
 															case '%2$s%1$s' :
-																echo $product->price.get_woocommerce_currency_symbol();
-															break;
+																echo '<span class="shop-item-price">'.$product->price.'<span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span></span>';
+																break;
 															case '%1$s&nbsp;%2$s' :
-																echo get_woocommerce_currency_symbol().' '.$product->price;
-															break;
+																echo '<span class="shop-item-price"><span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span> '.$product->price.'</span>';
+																break;
 															case '%2$s&nbsp;%1$s' :
-																echo $product->price.' '.get_woocommerce_currency_symbol();
-															break;
+																echo '<span class="shop-item-price">'.$product->price.' <span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span></span>';
+																break;
 														}
 													} else {
 														echo get_woocommerce_currency_symbol().$product->price;
@@ -380,17 +396,17 @@
 													if( !empty($format_string) ) {
 														switch ( $format_string ) {
 															case '%1$s%2$s' :
-																echo get_woocommerce_currency_symbol().$product->price;
-															break;
+																echo '<span class="shop-item-price"><span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span>'.$product->price.'</span>';
+																break;
 															case '%2$s%1$s' :
-																echo $product->price.get_woocommerce_currency_symbol();
-															break;
+																echo '<span class="shop-item-price">'.$product->price.'<span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span></span>';
+																break;
 															case '%1$s&nbsp;%2$s' :
-																echo get_woocommerce_currency_symbol().' '.$product->price;
-															break;
+																echo '<span class="shop-item-price"><span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span> '.$product->price.'</span>';
+																break;
 															case '%2$s&nbsp;%1$s' :
-																echo $product->price.' '.get_woocommerce_currency_symbol();
-															break;
+																echo '<span class="shop-item-price">'.$product->price.' <span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span></span>';
+																break;
 														}
 													} else {
 														echo get_woocommerce_currency_symbol().$product->price;
@@ -558,17 +574,17 @@
 													if( !empty($format_string) ) {
 														switch ( $format_string ) {
 															case '%1$s%2$s' :
-																echo get_woocommerce_currency_symbol().$product->price;
-															break;
+																echo '<span class="shop-item-price"><span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span>'.$product->price.'</span>';
+																break;
 															case '%2$s%1$s' :
-																echo $product->price.get_woocommerce_currency_symbol();
-															break;
+																echo '<span class="shop-item-price">'.$product->price.'<span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span></span>';
+																break;
 															case '%1$s&nbsp;%2$s' :
-																echo get_woocommerce_currency_symbol().' '.$product->price;
-															break;
+																echo '<span class="shop-item-price"><span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span> '.$product->price.'</span>';
+																break;
 															case '%2$s&nbsp;%1$s' :
-																echo $product->price.' '.get_woocommerce_currency_symbol();
-															break;
+																echo '<span class="shop-item-price">'.$product->price.' <span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span></span>';
+																break;
 														}
 													} else {
 														echo get_woocommerce_currency_symbol().$product->price;
@@ -624,17 +640,17 @@
 													if( !empty($format_string) ) {
 														switch ( $format_string ) {
 															case '%1$s%2$s' :
-																echo get_woocommerce_currency_symbol().$product->price;
-															break;
+																echo '<span class="shop-item-price"><span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span>'.$product->price.'</span>';
+																break;
 															case '%2$s%1$s' :
-																echo $product->price.get_woocommerce_currency_symbol();
-															break;
+																echo '<span class="shop-item-price">'.$product->price.'<span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span></span>';
+																break;
 															case '%1$s&nbsp;%2$s' :
-																echo get_woocommerce_currency_symbol().' '.$product->price;
-															break;
+																echo '<span class="shop-item-price"><span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span> '.$product->price.'</span>';
+																break;
 															case '%2$s&nbsp;%1$s' :
-																echo $product->price.' '.get_woocommerce_currency_symbol();
-															break;
+																echo '<span class="shop-item-price">'.$product->price.' <span class="shop-item-currency">'.get_woocommerce_currency_symbol().'</span></span>';
+																break;
 														}
 													} else {
 														echo get_woocommerce_currency_symbol().$product->price;

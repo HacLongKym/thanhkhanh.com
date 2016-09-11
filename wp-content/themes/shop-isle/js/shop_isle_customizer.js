@@ -208,19 +208,18 @@ jQuery(document).ready(function(){
 		}
 	});
 
-
-	/* Forum and Documentation links in customizer */
-
-	jQuery( '#customize-theme-controls > ul' ).prepend('<li class="accordion-section shop-isle-upsells">');
-
-	jQuery( '.shop-isle-upsells' ).append('<a style="width: 80%; margin: 5px auto 5px auto; display: block; text-align: center;" href="http://docs.themeisle.com/article/421-shop-isle-documentation-wordpress-org" class="button" target="_blank">{documentation}</a>'.replace('{documentation}',objectL10n.documentation));
-
-
 	jQuery('body').on('click', '.shop_isle_go_to_section', function (event) {
 		var id = jQuery(this).attr('href');
 		if( typeof(id) != 'undefined' ) {
 			jQuery("#" + id).find('h3').trigger('click');
 		}
 		event.preventDefault();
+	});
+
+	/* Locked sections */
+	jQuery('#accordion-section-shop_isle_upsell_section').click(function() {
+		jQuery('.wp-full-overlay').removeClass('section-open');
+		jQuery('#accordion-section-shop_isle_upsell_section').removeClass('open');
+		window.location.href = "http://themeisle.com/themes/shop-isle-pro/";
 	});
 });
