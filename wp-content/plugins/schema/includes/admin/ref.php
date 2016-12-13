@@ -13,9 +13,9 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-add_action( 'save_post', 'schema_save_ref', 10, 3 );
+add_action( 'save_post', 'schema_wp_save_ref', 10, 3 );
 /**
- * Save post metadata when a Schema post is saved.
+ * Save post metadata when a Schema Type is saved.
  * Add schema reference Id
  *
  * @param int $post_id The post ID.
@@ -23,7 +23,7 @@ add_action( 'save_post', 'schema_save_ref', 10, 3 );
  * @param bool $update Whether this is an existing post being updated or not.
  * @since 1.5.9.7
  */
-function schema_save_ref( $post_id, $post, $update ) {
+function schema_wp_save_ref( $post_id, $post, $update ) {
 	
 	if( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
     || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) 
@@ -41,7 +41,11 @@ function schema_save_ref( $post_id, $post, $update ) {
 		 return $post_id;
 		
     // - Update the post's metadata.
-	schema_update_all_meta_ref( $post_id );
+	schema_wp_update_all_meta_ref( $post_id );
+	
+	// Delete cached data in post meta
+	// @since 1.6.1
+	schema_wp_json_delete_cache();
 	
 	// Debug
 	//$msg = 'Is this un update? ';
@@ -58,7 +62,7 @@ function schema_save_ref( $post_id, $post, $update ) {
  * @param int $schema_id The schema post ID.
  * @since 1.5.9.7
  */
-function schema_update_all_meta_ref( $schema_id ) {
+function schema_wp_update_all_meta_ref( $schema_id ) {
 	
 	global $wpdb;
 	
@@ -71,7 +75,7 @@ function schema_update_all_meta_ref( $schema_id ) {
 	//echo '<pre>'; print_r($schema_type); echo '</pre>';exit; 
 	
 	if ( ! is_array( $schema_type ) || empty( $schema_type) ) return false;
-	 
+	
 	foreach( $schema_type as $schema_enabled ) :  
 		
 		$query = $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '%s'", $schema_enabled );
@@ -101,7 +105,7 @@ function schema_update_all_meta_ref( $schema_id ) {
  * @param int $post_id The post ID.
  * @since 1.5.9.6
  */
-function schema_update_meta_ref( $post_id ) {
+function schema_wp_update_meta_ref( $post_id ) {
 	
 	$schemas_enabled = array();
 	
@@ -113,6 +117,9 @@ function schema_update_meta_ref( $post_id ) {
 	// Get post type
 	if ( is_admin() ) {
 		// on back-end
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/screen.php' );
+		}
 		$current_screen = get_current_screen();
 		$post_type = $current_screen->post_type;
 	} else {
@@ -162,7 +169,7 @@ add_action( 'wp_insert_post', 'schema_wp_add_ref', 10, 1 );
  * @since 1.4.4
  * @return array of enabled post types, schema type
  */
-function schema_wp_add_ref($post_id) {
+function schema_wp_add_ref( $post_id ) {
 	
 	global $post;
 	
@@ -170,7 +177,7 @@ function schema_wp_add_ref($post_id) {
     
 	//$current_screen = get_current_screen();
 	//$post_type 		= $current_screen->post_type;
-	$slug 			= 'schema';
+	$slug = 'schema';
 
     // If this isn't a 'schema' post, don't update it.
     if ( $slug != $post->post_type ) {
@@ -179,8 +186,20 @@ function schema_wp_add_ref($post_id) {
 	
 	if( ( $_POST['post_status'] == 'publish' ) && ( $_POST['original_post_status'] != 'publish' ) ) {
 		
-		schema_update_meta_ref( $post_id );
+		schema_wp_update_meta_ref( $post_id );
     }
 	
 	return true;
+}
+
+
+add_action( 'future_post',  'schema_wp_add_ref_on_post_scheduled', 10, 2 );
+/**
+ * Add schema reference for scheduled posts
+ * 
+ * @since 1.6
+ */
+function schema_wp_add_ref_on_post_scheduled( $ID, $post ) {
+    // A function to perform actions when a post is scheduled to be published.
+	schema_wp_update_meta_ref( $ID );
 }

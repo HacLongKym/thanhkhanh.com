@@ -29,27 +29,31 @@ function schema_wp_install() {
 		
 		// Check if Schema post type exists,
 		// if not then initiate the function so we can insert post 
-		if ( ! post_type_exists( 'schema' ) )  schema_wp_cpt_init();
+		//if ( ! post_type_exists( 'schema' ) )  schema_wp_cpt_init();
 		
 		// Check if Post already exists
 		// @since 1.5.9.6
-		$check_old_post = get_page_by_title( 'Post' );
+		//$check_old_post = get_page_by_title( 'Post' );
+		// @since 1.6
+		$check_old_post = schema_wp_get_post_by_title( 'Post', 'schema' );
 		
 		/*
 		*	Insert schema for posts
 		*/
-		$schema_post = ($check_old_post) ? wp_insert_post(
+		$schema_post = ($check_old_post == null) ? wp_insert_post(
 			array(
 				'post_title'     => __( 'Post', 'schema-wp' ),
 				'post_content'   => '',
 				'post_status'    => 'publish',
 				'post_author'    => 1,
-				'post_type'      => 'schema'
+				'post_type'      => 'page'
 			)
 		) : false; // set to false if already exists
+	
 		
 		// update post meta
 		if ($schema_post) {
+			set_post_type( $schema_post, 'schema');	
 			update_post_meta( $schema_post, '_schema_type',  			__('Article') );
 			update_post_meta( $schema_post, '_schema_article_type',		__('BlogPosting') );
 			$schema_types = array();
@@ -72,23 +76,26 @@ function schema_wp_install() {
 		
 		// Check if Page already exists
 		// @since 1.5.9.6
-		$check_old_page = get_page_by_title( 'Page' );
+		//$check_old_page = get_page_by_title( 'Page' );
+		// @since 1.6
+		$check_old_page = schema_wp_get_post_by_title( 'Page', 'schema' );
 		
 		/*
 		*	Insert schema for pages
 		*/
-		$schema_page = ($check_old_page) ? wp_insert_post(
+		$schema_page = ($check_old_page == null) ? wp_insert_post(
 			array(
 				'post_title'     => __( 'Page', 'schema-wp' ),
 				'post_content'   => '',
 				'post_status'    => 'publish',
 				'post_author'    => 1,
-				'post_type'      => 'schema'
+				'post_type'      => 'page'
 			)
 		) : false; // set to false if already exists
 		
 		// Update post meta
 		if ( $schema_page ) {
+			set_post_type( $schema_page, 'schema');	
 			update_post_meta( $schema_page, '_schema_type',  __('Article') );
 			$schema_types = array();
 			$schema_types[0] = 'page';
@@ -101,7 +108,7 @@ function schema_wp_install() {
 			foreach( $pages as $p ) :
 				// - Update the page's metadata.
 				$check_ref = get_post_meta( $p->ID, '_schema_ref', true );
-				if ( ! isset($check_ref) || $check_ref =='' ) {
+				if ( ! isset($check_ref) || $check_ref == '' ) {
 					update_post_meta( $p->ID, '_schema_ref', $schema_post);
 				}
 		 	endforeach;
@@ -112,7 +119,6 @@ function schema_wp_install() {
 		$options['schema_wp_post'] = $schema_post;
 		$options['schema_wp_page'] = $schema_page;
 		update_option( 'schema_wp_settings', $options );
-
 	}
 
 	// Update pliugin version

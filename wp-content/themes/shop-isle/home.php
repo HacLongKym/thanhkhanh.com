@@ -55,8 +55,8 @@ endif;
 echo '</section><!-- .module -->';
 ?>
 	<!-- Header section end -->
-<div class="font-alt mt-30 error-page-button-text">
-<a href="/cua-hang-noi-that/" class="btn btn-border-w btn-round" style="color:#343ebb;min-width:30%">
+<div class="font-alt mt-30 error-page-button-text" style="text-align: center;">
+<a href="/cua-hang-noi-that/" class="btn btn-border-w btn-round" style="color:#343ebb;min-width:30%;font-size: x-large;">
 --->>>  Xem Cửa Hàng  <<<---
 </a>
 </div>

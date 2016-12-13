@@ -3,7 +3,7 @@
 Plugin Name: Google Analytics
 Plugin URI: http://wordpress.org/extend/plugins/googleanalytics/
 Description: Enables <a href="http://www.google.com/analytics/">Google Analytics</a> on all pages.
-Version: 1.0.6
+Version: 1.0.7
 Author: Kevin Sylvestre
 Author URI: http://ksylvest.com/
 */
@@ -34,21 +34,20 @@ function admin_menu_googleanalytics() {
 }
 
 function options_page_googleanalytics() {
-  include(WP_PLUGIN_DIR.'/googleanalytics/options.php');  
+  include(WP_PLUGIN_DIR.'/googleanalytics/options.php');
 }
 
 function googleanalytics() {
   $web_property_id = get_option('web_property_id');
 ?>
-<script type="text/javascript">
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', '<?php echo $web_property_id ?>']);
-_gaq.push(['_trackPageview']);
-(function() {
-var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', '<?php echo $web_property_id ?>', 'auto');
+ga('send', 'pageview');
 </script>
 <?php
 }

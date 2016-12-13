@@ -39,6 +39,9 @@ if ( !is_multisite() ) {
 		// Delete all meta keys 
 		// @since 1.4.4
 		delete_post_meta_by_key( '_schema_ref' );
+		delete_post_meta_by_key( '_schema_json' );
+		delete_post_meta_by_key( '_schema_json_timestamp' );
+		delete_post_meta_by_key( '_schema_exclude' );
 		
 		// Remove all plugin settings
 		delete_option( $option_name );
@@ -72,10 +75,13 @@ if ( !is_multisite() ) {
 			// Remove the Schema entries for posts and pages
 			wp_delete_post( $options['schema_wp_post'] );
 			wp_delete_post( $options['schema_wp_page'] );
-			
-			// Delete all meta keys
-			// @since 1.4.4 
+		
+			// Delete all JSON-LD meta keys
+			// @since 1.5.9.9
 			delete_post_meta_by_key( '_schema_ref' );
+			delete_post_meta_by_key( '_schema_json' );
+			delete_post_meta_by_key( '_schema_json_timestamp' );
+			delete_post_meta_by_key( '_schema_exclude' );
 		
 			// Remove all plugin settings
 			delete_option( $option_name );

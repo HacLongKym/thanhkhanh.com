@@ -13,8 +13,8 @@
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
 <?php wp_head(); ?>
-<link rel="canonical" href="http://noithat-thanhkhanh.ga" />
-<link rel="alternate" href="http://noithat-thanhkhanh.ga" hreflang="vi-vn" />
+<link rel="canonical" href="http://noithatthanhkhanh.com" />
+<link rel="alternate" href="http://noithatthanhkhanh.com" hreflang="vi-vn" />
 </head>
 
 <body <?php body_class(); ?>>

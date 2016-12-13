@@ -1,24 +1,23 @@
 === Schema ===
 Contributors: hishaman, schemapress
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NGVUBT2QXN7YL
-Tags: schema, schema.org, json, json-ld, google, seo, structured data, markup, search engine, search, rich snippets, social, post, page, plugin, wordpress, content, article, news, search results, site name, knowledge graph, social, social profiles, keywords, meta-tags, metadata, tags, categories, optimize, ranking, search engine optimization, search engines, serp, sitelinks, google sitelinks, sitelinks search box, google sitelinks search box, semantic, structured, canonical, custom post types, post type, title, terms, media, images, thumb, featured, url, video, video markup, video object, VideoObject, video schema, about, contact, amp, mobile
+Tags: schema, schema.org, json, json-ld, google, seo, structured data, markup, search engine, search, rich snippets, social, post, page, plugin, wordpress, content, article, news, search results, site name, knowledge graph, social, social profiles, keywords, meta-tags, metadata, tags, categories, optimize, ranking, search engine optimization, search engines, serp, sitelinks, google sitelinks, sitelinks search box, google sitelinks search box, semantic, structured, canonical, custom post types, post type, title, terms, media, images, thumb, featured, url, video, video markup, video object, VideoObject, video schema, audio object, AudioObject, audio schema, audio, sameAs, about, contact, amp, mobile
 Requires at least: 3.0
 Tested up to: 4.6.1
-Stable tag: 1.5.9.7
+Stable tag: 1.6.2
 
 Get the next generation of Schema Structured Data to enhance your WordPress site presentation in Google search results.
 
 == Description ==
 
+Like Schema plugin? Consider leaving a [5 star review](https://wordpress.org/support/plugin/schema/reviews/).
+
 Super fast, light-weight plugin for adding schema.org structured data markup in recommended JSON-LD format automatically to WordPress sites.
 
 Enhanced Presentation in Search Results By including structured data appropriate to your content, your site can enhance its search results and presentation.
 
-Check out the [Plugin Homepage](http://schema.press/) for more info and [documentation](http://schema.press/docs/).
+Check out the [Plugin Homepage](https://schema.press/) for more info and [documentation](http://schema.press/docs/).
 
-**Developers?**
-
-Feel free to [fork the project on GitHub](https://github.com/schemapress/Schema) and submit your contributions via pull request.
 
 **What is Schema markup?**
 
@@ -32,6 +31,11 @@ Schema markup is code (semantic vocabulary) that you put on your website to help
 * Output JSON-LD format, the most recommended by Google.
 * Can reuse data saved in post meta that is created by other plugins.
 * Extensible, means you can extend its functionality via other plugins, extensions or within your Theme’s functions.php file.
+
+**Plugin Extensions**
+
+* [Schema Review](https://wordpress.org/plugins/schema-review/): Extend Schema functionality by adding review and rating Structured Data functionality for Editors and Authors.
+* [Schema Default Image](https://wordpress.org/plugins/schema-default-image/): Add ability to set a default WordPress Featured image for schema.org markup.
 
 **Supported Google/Schema Markups**
 
@@ -62,18 +66,24 @@ Schema markup is code (semantic vocabulary) that you put on your website to help
 * [VideoObject](https://schema.org/VideoObject) enable automatically on all videos embedded with oEmbed. Supports VideoPress, YouTube, TED, Vimeo, Dailymotion, and Vine.
 * [AudioObject](https://schema.org/AudioObject) enable automatically on all audio embedded with oEmbed. Supports SoundCloud, and Mixcloud.
 
-* Supported Plugins: 
+**Supported Plugins**
+
  * Yoast SEO
  * AMP plugin
  * WPRichSnippets
  * The SEO Framework
  * Visual Composer
 
-* Supported Themes
+**Supported Themes**
+
  * Genesis 2.x 
  * Thesis 2.x
  * Divi
- 
+
+**Developers?**
+
+Feel free to [fork the project on GitHub](https://github.com/schemapress/Schema) and submit your contributions via pull request.
+
 == Installation ==
 
 1. Upload the entire `schema` folder to the `/wp-content/plugins/` directory
@@ -113,6 +123,55 @@ Yes, Schema plugin will detect AMP plugin and output a more complete and valid s
 4. Google Structured Data Testing Tool.
 
 == Changelog ==
+
+= 1.6.2 =
+* Fixed fatal error when previewing or activating non-Genesis themes.
+* Fixed fatal error when calling get_current_screen in admin pages.
+* Fixes gravatar cached response problem.
+* Modified readme.txt file.
+
+= 1.6.1 =
+* Fixed hide VideoObject and AudioObject meta boxes if not enabled in settings.
+* Added new hook schema_wp_do_after_settings_updated.
+* Added new function schema_wp_json_delete_cache to flush cached json-ld post meta.
+* Added flush cached json-ld post meta whenever plugin settings got updated.
+
+= 1.6 =
+* Fixed exclude post was not working properly.
+* Fixed cached post meta timestamp should be deleted on post save.
+* Fixed Schema post type label value.
+* Fixed Schema post types was not created on plugin activation.
+* Fixed schema reference post meta was not saved for scheduled posts.
+* Enhanced gravatar validation function.
+* Enhanced Blog markup performance by pulling data from cached post meta.
+* Added missing BlogPosting description in Blog page markup.
+* Added sameAs markup to BlogPosting property in Blog page markup.
+* Added sameAs markup to About page.
+* Added sameAs markup to Contact page.
+* Added new filter schema_blog_output to allow dev extend markups.
+* Added new filter schema_about_page_output to allow dev extend markups.
+* Added new filter schema_contact_page_output to allow dev extend markups.
+* Added missing post meta to the plugin uninstall function.
+* Added new function for recursive array search to admin functions file.
+* Modified readme.txt file.
+
+= 1.5.9.9 =
+* Fixed category id on category pages.
+* Fixed a notice on VideoObject function.
+* Fixed Schema JSON-LD not updating by flushing cache on schema type save.
+* Added Schema property sameAs core extension.
+* Added delete Schema JSON-LD post meta on plugin uninstall.
+* Added delete Schema Exclude post meta on plugin uninstall.
+
+= 1.5.9.8 =
+* Fixed missing translation in category title.
+* Added new filter to schema_category_json to extend category markup.
+* Added new function to clear/delete schema json post meta value on post save.
+* Added support for schema.org sameAS property for category pages.
+* Added new custom taxonomy meta fields class.  
+* Added new admin link to the plugin About page. 
+* Corrected names of some functions, and renamed files.
+* Modified readme.txt file.
 
 = 1.5.9.7 =
 * Fixed slow performance by reducing number of queries made by the plugin.
@@ -349,6 +408,21 @@ Yes, Schema plugin will detect AMP plugin and output a more complete and valid s
 * Initial Release
 
 == Upgrade Notice ==
+
+= 1.6.2 =
+In this update, important bugs has been fixed, prevent fatal errors on admin pages and with older versions of Genesis. Please, upgrade now to get this fix.
+
+= 1.6.1 =
+In this update, a bug got fixed and a couple of other enhancements which enhance plugin settings usability has been applied. Please, upgrade now to get these enhancements.
+
+= 1.6 =
+Several bug fixes and enhancement has been done in this release, plus a new extension release for Schema Review. Please, upgrade now to get these enhancements.
+
+= 1.5.9.9 =
+Several bug fixes and enhancement has been made to the plugin in this release, plus a new sameAs property for your content. Please, upgrade now to get these enhancements.
+
+= 1.5.9.8 =
+More enhancement has been made to the plugin in this release, plus a couple of new features. Please, upgrade now to get these enhancements.
 
 = 1.5.9.7 =
 This update includes enhancement to performance by caching JSON-LD output in post meta, this will reduce database queries and make your site loads faster. Please, upgrade now to get these enhancements. 

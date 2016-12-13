@@ -13,6 +13,34 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
+add_action( 'schema_wp_do_after_settings_updated', 'schema_wp_after_update_settings' );
+/**
+ * Delete Schema KSON-LD cached data in post meta  on plugin settings update
+ *
+ *
+ * @since  1.6.1
+ */
+function schema_wp_after_update_settings() {
+    
+	// Delete cached data in post meta
+	schema_wp_json_delete_cache();
+}
+
+
+/**
+ * Delete Schema KSON-LD cached data in post meta 
+ *
+ *
+ * @since  1.6.1
+ */
+function schema_wp_json_delete_cache() {
+    
+	// Delete cached data in post meta
+	delete_post_meta_by_key( '_schema_json' );
+	delete_post_meta_by_key( '_schema_json_timestamp' );
+}
+
+
 /**
  * Sanitizes a string key for Schema Settings
  *
@@ -74,6 +102,49 @@ function schema_wp_array_flatten($array) {
 	}
 	
 	return $return;
+}
+
+
+/**
+* Retrieve a post given its title.
+*
+* @link http://wordpress.stackexchange.com/questions/11292/how-do-i-get-a-post-page-or-cpt-id-from-a-title-or-slug/11296#11296
+*
+* @since 1.6
+*
+* @uses $wpdb
+*
+* @param string $post_title Page title
+* @param string $post_type post type ('post','page','any custom type')
+* @param string $output Optional. Output type. OBJECT, ARRAY_N, or ARRAY_A.
+* @return mixed
+*/
+function schema_wp_get_post_by_title($page_title, $post_type = 'post' , $output = OBJECT) {
+    global $wpdb;
+        $post = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type= %s", $page_title, $post_type));
+        if ( $post )
+            return get_post($post, $output);
+
+    return null;
+}
+
+
+/**
+ * Recursive array search
+ *
+ * #link http://php.net/manual/en/function.array-search.php
+ *
+ * @since 1.6
+ * @return Returns the key for needle if it is found in the array, FALSE otherwise. 
+ */
+function schema_wp_recursive_array_search( $needle, $haystack ) {
+    foreach($haystack as $key=>$value) {
+        $current_key=$key;
+        if($needle===$value OR (is_array($value) && schema_wp_recursive_array_search($needle,$value) !== false)) {
+            return $current_key;
+        }
+    }
+    return false;
 }
 
 

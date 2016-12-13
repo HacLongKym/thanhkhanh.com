@@ -95,7 +95,7 @@
 						$combined_link = "";
 
 						$cachFilePath = WPFC_WP_CONTENT_DIR."/cache/wpfc-minified/".$combined_name;
-						$cssLink = str_replace(array("http:", "https:"), "", content_url())."/cache/wpfc-minified/".$combined_name;
+						$cssLink = str_replace(array("http:", "https:"), "", WPFC_WP_CONTENT_URL)."/cache/wpfc-minified/".$combined_name;
 
 						$GLOBALS["wp_fastest_cache"]->images_in_css["name"] = $GLOBALS["wp_fastest_cache"]->images_in_css["name"].$cachFilePath;
 
@@ -300,7 +300,7 @@
 			$this->url = $url;
 
 			$cachFilePath = WPFC_WP_CONTENT_DIR."/cache/wpfc-minified/".md5($url);
-			$cssLink = content_url()."/cache/wpfc-minified/".md5($url);
+			$cssLink = WPFC_WP_CONTENT_URL."/cache/wpfc-minified/".md5($url);
 
 			if(is_dir($cachFilePath)){
 				if($cssFiles = @scandir($cachFilePath, 1)){
@@ -315,11 +315,11 @@
 
 					$original_content_length = strlen($cssContent);
 
-					$cssContent = $this->fixPathsInCssContent($cssContent, $url);
-					
 					if(isset($this->wpfc->options->wpFastestCacheMinifyCss) && $this->wpfc->options->wpFastestCacheMinifyCss){
 						$cssContent = $this->_process($cssContent);
 					}
+
+					$cssContent = $this->fixPathsInCssContent($cssContent, $url);
 
 					if(isset($this->wpfc->options->wpFastestCacheMinifyCssPowerFul) && $this->wpfc->options->wpFastestCacheMinifyCssPowerFul){
 						if(class_exists("WpFastestCachePowerfulHtml")){

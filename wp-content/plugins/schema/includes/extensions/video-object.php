@@ -21,7 +21,13 @@ function schema_wp_video_object_admin_init() {
 	
 	if ( ! is_admin() ) return;
 	
-	if ( ! class_exists( 'Schema_WP' ) ) return;
+	if ( ! class_exists( 'Schema_WP' ) )
+		return;
+	
+	$video_objec_enable = schema_wp_get_option( 'video_object_enable' );
+	
+	if ( $video_objec_enable != true )
+		return;
 	
 	$prefix = '_schema_video_object_';
 
@@ -137,7 +143,7 @@ function schema_wp_video_object_post_meta() {
 	
 	foreach( $schemas_enabled as $schema_enabled ) : 
 		
-		$type = $schema_enabled['video_object_type'] != '' ? $schema_enabled['video_object_type'] : '';
+		$type = (isset($schema_enabled['video_object_type']) && $schema_enabled['video_object_type'] != '') ? $schema_enabled['video_object_type'] : '';
 		
 		// Add meta box only for type signle, preset an entry with one embed video
 		if ( $type == 'single' )  {

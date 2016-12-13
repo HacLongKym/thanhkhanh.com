@@ -16,10 +16,6 @@
 			$this->setCronJobSettings();
 			$this->addButtonOnEditor();
 			add_action('admin_enqueue_scripts', array($this, 'addJavaScript'));
-
-			if($this->isPluginActive('ninja-forms/ninja-forms.php')){
-				$this->create_auto_cache_timeout("twicedaily", 43200);
-			}
 		}
 
 		public function create_auto_cache_timeout($recurrance, $interval){
@@ -238,6 +234,7 @@
 							$this->set_preload();
 						}else{
 							delete_option("WpFastestCachePreLoad");
+							wp_clear_scheduled_hook("wp_fastest_cache_Preload");
 						}
 
 						if(get_option("WpFastestCache")){
@@ -339,8 +336,8 @@
 				return array("You have to set <strong><u><a href='".admin_url()."options-permalink.php"."'>permalinks</a></u></strong>", "error");
 			}else if($res = $this->checkSuperCache($path, $htaccess)){
 				return $res;
-			}else if($this->isPluginActive('wp-hide-security-enhancer/wp-hide.php')){
-				return array("WP Hide & Security Enhancer needs to be deactived<br>", "error");
+			// }else if($this->isPluginActive('wp-hide-security-enhancer/wp-hide.php')){
+			// 	return array("WP Hide & Security Enhancer needs to be deactived<br>", "error");
 			}else if($this->isPluginActive('adrotate/adrotate.php') || $this->isPluginActive('adrotate-pro/adrotate.php')){
 				return $this->warningIncompatible("AdRotate");
 			}else if($this->isPluginActive('mobilepress/mobilepress.php')){
@@ -519,6 +516,7 @@
 			$mobile = "";
 			$loggedInUser = "";
 			$ifIsNotSecure = "";
+			$trailing_slash_rule = "";
 
 			if(isset($_POST["wpFastestCacheMobile"]) && $_POST["wpFastestCacheMobile"] == "on"){
 				$mobile = "RewriteCond %{HTTP_USER_AGENT} !^.*(".$this->getMobileUserAgents().").*$ [NC]"."\n";
@@ -545,6 +543,7 @@
 					$this->ruleForWpContent()."\n".
 					$this->prefixRedirect().
 					$this->excludeRules()."\n".
+					$this->http_condition_rule()."\n".
 					"RewriteCond %{HTTP_USER_AGENT} !(".$this->get_excluded_useragent().")"."\n".
 					"RewriteCond %{REQUEST_METHOD} !POST"."\n".
 					$ifIsNotSecure."\n".
@@ -591,6 +590,20 @@
 					"</FilesMatch>"."\n".
 					"# END WpFastestCache"."\n";
 			return preg_replace("/\n+/","\n", $data);
+		}
+
+		public function http_condition_rule(){
+			$http_host = preg_replace("/(http(s?)\:)?\/\/(www\d*\.)?/i", "", trim(home_url(), "/"));
+
+			if(preg_match("/\//", $http_host)){
+				$http_host = strstr($http_host, '/', true);
+			}
+
+			if(preg_match("/www\./", home_url())){
+				$http_host = "www.".$http_host;
+			}
+
+			return "RewriteCond %{HTTP_HOST} ^".$http_host;
 		}
 
 		public function ruleForWpContent(){
@@ -683,9 +696,10 @@
 				echo "<noscript id='wpfc-htaccess-path-data'>".$path.".htaccess"."</noscript>";
 				?>
 				<script type="text/javascript">
-					Wpfc_Dialog.dialog("wpfc-htaccess-modal");
-					jQuery("#wpfc-htaccess-modal-rules").html(jQuery("#wpfc-htaccess-data").html());
-					jQuery("#wpfc-htaccess-modal-path").html(jQuery("#wpfc-htaccess-path-data").html());
+					Wpfc_New_Dialog.dialog("wpfc-modal-htaccess", {close: "default"}, function(modal){
+						jQuery("#" + modal.id).find("label.mm-input-label").html(jQuery("#wpfc-htaccess-path-data").html());
+						jQuery("#" + modal.id).find("textarea.wiz-inp-readonly-textarea").html(jQuery("#wpfc-htaccess-data").html());
+					});
 				</script>
 				<?php
 			}
@@ -725,6 +739,7 @@
 
 			$wpFastestCacheMobile = isset($this->options->wpFastestCacheMobile) ? 'checked="checked"' : "";
 			$wpFastestCacheMobileTheme = isset($this->options->wpFastestCacheMobileTheme) ? 'checked="checked"' : "";
+			$wpFastestCacheMobileTheme_themename = isset($this->options->wpFastestCacheMobileTheme_themename) ? $this->options->wpFastestCacheMobileTheme_themename : "";
 
 			$wpFastestCacheNewPost = isset($this->options->wpFastestCacheNewPost) ? 'checked="checked"' : "";
 			
@@ -780,7 +795,7 @@
 							}else if((isset($_POST["wpFastestCachePage"])) && ("wpfc-".$_POST["wpFastestCachePage"] == $value["id"])){
 								$checked = ' checked="checked" ';
 							}
-							echo '<input '.$checked.' type="radio" id="'.$value["id"].'" name="tabGroup1">'."\n";
+							echo '<input '.$checked.' type="radio" id="'.$value["id"].'" name="tabGroup1" style="display:none;">'."\n";
 							echo '<label for="'.$value["id"].'">'.$value["title"].'</label>'."\n";
 						}
 					?>
@@ -818,6 +833,22 @@
 								<div class="question">Mobile Theme</div>
 								<div class="inputCon"><input type="checkbox" <?php echo $wpFastestCacheMobileTheme; ?> id="wpFastestCacheMobileTheme" name="wpFastestCacheMobileTheme"><label for="wpFastestCacheMobileTheme">Create cache for mobile theme</label></div>
 							</div>
+
+							<?php 
+								$tester_arr_mobile = array(
+									"berkatan.com",
+									"yenihobiler.com",
+									"hobiblogu.com",
+									"canliradyodinle.life",
+									"canlitvturk.org",
+									"haftahaftahamilelik.gen.tr"
+									);
+
+								if(in_array(get_bloginfo('language'), $tester_arr_mobile) || in_array(str_replace("www.", "", $_SERVER["HTTP_HOST"]), $tester_arr_mobile)){
+									include_once WPFC_WP_PLUGIN_DIR."/wp-fastest-cache-premium/pro/templates/mobile_theme.php";
+								}
+							?>
+							
 							<?php }else{ ?>
 							<div class="questionCon disabled">
 								<div class="question">Mobile Theme</div>
@@ -945,112 +976,6 @@
 								<div class="get-info"><a target="_blank" href="http://www.wpfastestcache.com/optimization/leverage-browser-caching/"><img src="<?php echo plugins_url("wp-fastest-cache/images/info.png"); ?>" /></a></div>
 							</div>
 
-							<?php if(class_exists("WpFastestCachePowerfulHtml")){ ?>
-								<?php if(method_exists("WpFastestCachePowerfulHtml", "render_blocking")){ ?>
-									<?php
-									$tester_arr = array(
-														"de-DE",
-														"es_CL",
-														"es_AR",
-														"es_GT",
-														"es_PE",
-														"es_VE",
-														"es_CO",
-														"es_MX",
-														"es_ES",
-														"es-ES",
-														"fr-FR",
-														"fr-BE",
-														"fr-CA",
-														"fr-FR",
-														"it-IT",
-														"ja",
-														"nl-NL",
-														"pt-PT",
-														"pt-BR",
-														"tr-TR",
-														"berkatan.com",
-														"worthynews.com",
-														"beherit.pl",
-														"freshonlinejobs.com",
-														"chelly.id",
-														"spycoupon.in",
-														"comfortableshoeguide.com",
-														"043web.nl",
-														"ifra.nl",
-														"goflre.com",
-														"highhouseinsurance.com",
-														"silongedu.com",
-														"ssn.localhost",
-														"speedskatingnews.info",
-														"vicuras.dk",
-														"juicycherries.ie",
-														"citymapxl.com",
-														"surfingrealty.com",
-														"biz163.inmotionhosting.com",
-														"apreet.com",
-														"rkade.uk.com",
-														"alaskaremote.com",
-														"quanglepro.com",
-														"marccastricum.nl",
-														"flexiscreens.com",
-														"montarent.nl",
-														"tropicalserver.com",
-														"dgidirect.ca",
-														"campfireaudio.com",
-														"dgitest.qtelmedia.ca",
-														"qtelmedia.ca",
-														"solacity.com",
-														"123casinos.com",
-														"en.metinkerem.com",
-														"rjspest.com",
-														"alexandra-boutique.co.uk",
-														"dev.pshsa.ca",
-														"pshsa.ca",
-														"harlemlocal.com",
-														"adoptafamily.org",
-														"thebrooklandscars.co.uk",
-														"smartyblog.com",
-														"stevechaplinphotography.com",
-														"oemperformance.com",
-														"image-restore.co.uk",
-														"technews247.de",
-														"allfacebook.de",
-														"aerospaceengineering.aero",
-														"swankyrecipes.com",
-														"mybettermarriage.com",
-														"webbdo.se",
-														"bellsalaska.com",
-														"tryhealthier.com",
-														"aboutpainting.ca",
-														"countrygraphics.com",
-														"promanagewp.com.au",
-														"webstrategy.de",
-														"melaniedawn.co",
-														"rykon.ca",
-														"wpfastestcache.com",
-														"hakangurer.com",
-														"ronischmuck.ch",
-														"musthaveguy.com",
-														"artofwellbeing.com",
-														"mrmasterkey.com",
-														"ww2.mrmasterkey.com",
-														"androiduygulamalar.com",
-														"themovingroad.com",
-														"videoseyredin.com",
-														"internetzanatlija.com",
-														"xtremerain.com",
-														"applerepairclub.com",
-														"nackenstuetzkissen-test.de", 
-														"coincollectingenterprises.com"
-														);
-
-									if(in_array(get_bloginfo('language'), $tester_arr) || in_array(str_replace("www.", "", $_SERVER["HTTP_HOST"]), $tester_arr)){ ?>
-										
-									<?php } ?>
-								<?php } ?>
-							<?php } ?>
-
 							<?php if(class_exists("WpFastestCachePowerfulHtml")){ ?> 
 								<?php if(method_exists("WpFastestCachePowerfulHtml", "render_blocking")){ ?>
 									<div class="questionCon">
@@ -1074,16 +999,49 @@
 							<?php } ?>
 
 
-							<?php if(false){ ?>
-							<div class="questionCon">
-								<div class="question">Lazy Load</div>
-								<div class="inputCon"><input type="checkbox" <?php echo $wpFastestCacheLazyLoad; ?> id="wpFastestCacheLazyLoad" name="wpFastestCacheLazyLoad"><label for="wpFastestCacheLazyLoad">Lazy Load</label></div>
-								<div class="get-info"><a target="_blank" href="http://www.wpfastestcache.com/premium/render-blocking-js/"><img src="<?php echo plugins_url("wp-fastest-cache/images/info.png"); ?>" /></a></div>
-							</div>
 
-							<?php include(WPFC_MAIN_PATH."templates/lazy_load.php"); ?>
+							<?php if(class_exists("WpFastestCachePowerfulHtml")){ ?>
+								<?php if(method_exists("WpFastestCachePowerfulHtml", "lazy_load")){ ?>
+									<?php
+									$tester_arr = array(
+														// "de-DE",
+														// "es_CL",
+														// "es_AR",
+														// "es_GT",
+														// "es_PE",
+														// "es_VE",
+														// "es_CO",
+														// "es_MX",
+														// "es_ES",
+														// "es-ES",
+														// "fr-FR",
+														// "fr-BE",
+														// "fr-CA",
+														// "fr-FR",
+														// "it-IT",
+														// "ja",
+														// "nl-NL",
+														// "pt-PT",
+														// "pt-BR",
+														//"tr-TR",
+														"berkatan.com",
+														"yenihobiler.com",
+														"hobiblogu.com",
+														"pembeportakal.com"
+														);
 
+									if(in_array(get_bloginfo('language'), $tester_arr) || in_array(str_replace("www.", "", $_SERVER["HTTP_HOST"]), $tester_arr)){ ?>
+									<div class="questionCon">
+										<div class="question">Lazy Load</div>
+										<div class="inputCon"><input type="checkbox" <?php echo $wpFastestCacheLazyLoad; ?> id="wpFastestCacheLazyLoad" name="wpFastestCacheLazyLoad"><label for="wpFastestCacheLazyLoad">Lazy Load</label></div>
+										<div class="get-info"><a target="_blank" href="http://www.wpfastestcache.com/premium/render-blocking-js/"><img src="<?php echo plugins_url("wp-fastest-cache/images/info.png"); ?>" /></a></div>
+									</div>
+
+									<?php //include(WPFC_MAIN_PATH."templates/lazy_load.php"); ?>
+									<?php } ?>
+								<?php } ?>
 							<?php } ?>
+
 
 							<div class="questionCon">
 								<div class="question">Language</div>
@@ -1109,7 +1067,7 @@
 								</div>
 							</div>
 							<div class="questionCon qsubmit">
-								<div class="submit"><input type="submit" value="Submit" class="button-primary"></div>
+								<div class="submit" style="float: none !important;"><input type="submit" value="Submit" class="button-primary"></div>
 							</div>
 						</form>
 				    </div>
@@ -1458,14 +1416,15 @@
 				    				?>
 				    				<h1 style="float:left;" id="just-h1">Just</h1><h1>$<span id="wpfc-premium-price"><?php echo $premium_price; ?></span></h1>
 				    				<p>The download button will be available after paid. You can buy the premium version now.</p>
-				    				
-				    				<?php if(!preg_match("/\.ir$/i", $_SERVER["HTTP_HOST"])){ ?>
+
+				    				<?php if(!preg_match("/Caiu\s*Na/i", get_bloginfo("name")) && !preg_match("/caiuna/i", $_SERVER["HTTP_HOST"]) && !preg_match("/\.ir$/i", $_SERVER["HTTP_HOST"])){ ?>
 					    				<?php if(class_exists("WpFastestCachePowerfulHtml")){ ?>
 						    					<button id="wpfc-buy-premium-button" type="submit" class="wpfc-btn primaryDisableCta" style="width:200px;">
 							    					<span>Purchased</span>
 							    				</button>
 						    				<?php }else{ ?>
 							    				<form action="http://api.wpfastestcache.net/paypal/buypremium/" method="post">
+							    					<input type="hidden" name="ip" value="<?php echo $_SERVER["REMOTE_ADDR"]; ?>">
 							    					<input type="hidden" name="wpfclang" value="<?php echo $this->options->wpFastestCacheLanguage; ?>">
 							    					<input type="hidden" name="bloglang" value="<?php echo get_bloginfo('language'); ?>">
 							    					<input type="hidden" name="hostname" value="<?php echo str_replace(array("http://", "www."), "", $_SERVER["HTTP_HOST"]); ?>">
@@ -1818,6 +1777,11 @@
 			</div>
 
 			<div class="omni_admin_sidebar">
+<!-- 				<div style="padding:0 !important;float:left;">
+					<a href="//partners.hostgator.com/c/149801/178138/3094" target="_blank">
+						<img src="<?php echo plugins_url("wp-fastest-cache/images/ads/hostgator-250x250.gif"); ?>" border="0" alt="" width="222" height="220"/>
+					</a>
+				</div> -->
 				<div class="omni_admin_sidebar_section" id="vote-us">
 					<h3 style="color: antiquewhite;">Rate Us</h3>
 					<ul>
@@ -1978,6 +1942,23 @@
 					});
 				</script>
 			<?php } ?>
+			<script type="text/javascript">
+				jQuery(document).ready(function() {
+					//if "Mobile Theme" is selected, "Mobile" is selected as well
+					jQuery("#wpFastestCacheMobileTheme").click(function(e){
+						if(jQuery(this).is(':checked')){
+							jQuery("#wpFastestCacheMobile").attr('checked', true);
+						}
+					});
+
+					//if "Mobile Theme" has been selected, "Mobile" option cannot be changed
+					jQuery("#wpFastestCacheMobile").click(function(e){
+						if(jQuery("#wpFastestCacheMobileTheme").is(':checked')){
+							jQuery(this).attr('checked', true);
+						}
+					});
+				});
+			</script>
 			<script>
 				jQuery(document).ready(function() {
 					Wpfclang.init("<?php echo $wpFastestCacheLanguage; ?>");
@@ -1985,7 +1966,9 @@
 			</script>
 			<?php
 			if(isset($_SERVER["SERVER_SOFTWARE"]) && $_SERVER["SERVER_SOFTWARE"] && !preg_match("/iis/i", $_SERVER["SERVER_SOFTWARE"]) && !preg_match("/nginx/i", $_SERVER["SERVER_SOFTWARE"])){
-				$this->check_htaccess();
+				if(!isset($_POST["wpFastestCachePage"])){
+					$this->check_htaccess();
+				}
 			}
 		}
 	}
